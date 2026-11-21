@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AKV Pictures | Official Cinema Showcase & Digital Vault</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter & Cinzel for cinematic headers -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        cinema: ['Cinzel', 'serif'],
+                    },
+                    colors: {
+                        akv: {
+                            black: '#09090b',
+                            surface: '#121216',
+                            card: '#18181f',
+                            red: '#e50914',
+                            redHover: '#b80710',
+                            gold: '#f5c518',
+                            goldHover: '#d4a70d',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom Scrollbar for sleek dark look */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #09090b;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #27272a;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #e50914;
+        }
+        /* Hide scrollbar for category bar on mobile */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        /* Subtle cinema vignette */
+        .hero-gradient {
+            background: linear-gradient(to top, #09090b 8%, rgba(9, 9, 11, 0.75) 45%, rgba(9, 9, 11, 0.3) 100%),
+                        linear-gradient(to right, #09090b 10%, rgba(9, 9, 11, 0.65) 55%, rgba(9, 9, 11, 0.1) 100%);
+        }
+    </style>
+</head>
+<body class="bg-akv-black text-zinc-100 font-sans antialiased selection:bg-akv-red selection:text-white min-h-screen flex flex-col">
+
+    <!-- ==================== TOP NAVIGATION BAR ==================== -->
+    <header class="sticky top-0 z-40 bg-akv-black/90 backdrop-blur-md border-b border-zinc-800/80 transition-all">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-wrap items-center justify-between gap-4 py-3.5">
+                
+                <!-- AKV Pictures Brand Logo -->
+                <a href="#" onclick="resetFilters(event)" class="flex items-center gap-3 group focus:outline-none">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-akv-red to-red-900 flex items-center justify-center shadow-lg shadow-akv-red/30 border border-akv-gold/30 group-hover:scale-105 transition-transform">
+                        <svg class="w-5 h-5 text-akv-gold" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M18 4l2 4h-3l-2-4h-2l2 4h-3l-2-4H8l2 4H7L5 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4h-4z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <span class="font-cinema text-xl sm:text-2xl font-extrabold tracking-wider text-white">
+                            AKV <span class="text-akv-gold">PICTURES</span>
+                        </span>
+                        <span class="block text-[10px] uppercase tracking-[0.25em] text-zinc-400 -mt-1">Official Studio Vault</span>
+                    </div>
+                </a>
+
+                <!-- Search Bar & Admin Upload Action -->
+                <div class="flex items-center gap-3 w-full md:w-auto order-3 md:order-2">
+                    <div class="relative flex-1 md:w-72 lg:w-80">
+                        <input 
+                            type="text" 
+                            id="searchInput" 
+                            placeholder="Search titles, genres, year..." 
+                            class="w-full bg-akv-surface border border-zinc-800 focus:border-akv-gold text-sm text-white placeholder-zinc-500 rounded-xl pl-10 pr-4 py-2.5 focus:outline-none focus:ring-1 focus:ring-akv-gold/50 transition-all"
+                        >
+                        <svg class="w-4 h-4 text-zinc-400 absolute left-3.5 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                        </svg>
+                    </div>
+
+                    <button 
+                        onclick="openAdminModal()" 
+                        class="flex items-center gap-2 bg-gradient-to-r from-akv-gold to-amber-500 hover:from-amber-400 hover:to-akv-gold text-zinc-950 font-bold text-xs sm:text-sm px-4 py-2.5 rounded-xl shadow-lg shadow-akv-gold/20 transition-all active:scale-95 whitespace-nowrap cursor-pointer"
+                    >
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+                        </svg>
+                        <span>Admin Upload</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Category Filter Pills -->
+            <div class="flex items-center gap-2 pb-3 overflow-x-auto no-scrollbar" id="categoryBar">
+                <button data-category="All" class="category-btn active px-4 py-1.5 rounded-full text-xs font-semibold bg-akv-red text-white shadow-md shadow-akv-red/30 transition-all cursor-pointer">All</button>
+                <button data-category="Action" class="category-btn px-4 py-1.5 rounded-full text-xs font-semibold bg-akv-surface text-zinc-400 hover:text-white hover:bg-zinc-800 border border-zinc-800/80 transition-all cursor-pointer">Action</button>
+                <button data-category="Drama" class="category-btn px-4 py-1.5 rounded-full text-xs font-semibold bg-akv-surface text-zinc-400 hover:text-white hover:bg-zinc-800 border border-zinc-800/80 transition-all cursor-pointer">Drama</button>
+                <button data-category="Thriller" class="category-btn px-4 py-1.5 rounded-full text-xs font-semibold bg-akv-surface text-zinc-400 hover:text-white hover:bg-zinc-800 border border-zinc-800/80 transition-all cursor-pointer">Thriller</button>
+                <button data-category="Sci-Fi" class="category-btn px-4 py-1.5 rounded-full text-xs font-semibold bg-akv-surface text-zinc-400 hover:text-white hover:bg-zinc-800 border border-zinc-800/80 transition-all cursor-pointer">Sci-Fi</button>
+                <button data-category="Comedy" class="category-btn px-4 py-1.5 rounded-full text-xs font-semibold bg-akv-surface text-zinc-400 hover:text-white hover:bg-zinc-800 border border-zinc-800/80 transition-all cursor-pointer">Comedy</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- ==================== FEATURED HERO BANNER ==================== -->
+    <section id="heroSection" class="relative w-full min-h-[460px] sm:min-h-[540px] flex items-end overflow-hidden border-b border-zinc-800/70">
+        <!-- Hero Backdrop Image -->
+        <img 
+            id="heroBackdrop" 
+            src="https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=1920&q=80" 
+            alt="Featured Cinema" 
+            onerror="this.src='https://placehold.co/1920x1080/121216/f5c518?text=AKV+PICTURES+PREMIERE'"
+            class="absolute inset-0 w-full h-full object-cover object-center scale-105 transition-transform duration-1000"
+        >
+        <div class="hero-gradient absolute inset-0"></div>
+
+        <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 w-full">
+            <div class="max-w-2xl space-y-4">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-akv-red/20 border border-akv-red/40 backdrop-blur-sm">
+                    <span class="w-2 h-2 rounded-full bg-akv-red animate-pulse"></span>
+                    <span class="text-xs font-bold uppercase tracking-widest text-akv-gold">AKV Original Premiere</span>
+                </div>
+
+                <h1 id="heroTitle" class="font-cinema text-3xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-tight drop-shadow-lg">
+                    THE CRIMSON HORIZON
+                </h1>
+
+                <div id="heroMeta" class="flex flex-wrap items-center gap-3 text-xs sm:text-sm text-zinc-300 font-medium">
+                    <span class="px-2 py-0.5 rounded bg-akv-gold text-zinc-950 font-extrabold">4K ULTRA HD</span>
+                    <span>2026</span>
+                    <span>•</span>
+                    <span>Action / Sci-Fi</span>
+                    <span>•</span>
+                    <span class="text-zinc-400">Size: 4.8 GB</span>
+                </div>
+
+                <p id="heroDescription" class="text-sm sm:text-base text-zinc-300 leading-relaxed line-clamp-3">
+                    When a deep-space extraction crew uncovers an ancient signal beyond the outer rim, one rogue pilot must outrun a corporate armada to deliver the truth to Earth. Mastered in Dolby Vision &amp; 4K HDR exclusively by AKV Pictures.
+                </p>
+
+                <div class="flex flex-wrap items-center gap-3 pt-3">
+                    <button 
+                        id="heroPlayBtn"
+                        class="flex items-center gap-2.5 bg-akv-red hover:bg-akv-redHover text-white font-bold px-6 py-3.5 rounded-xl shadow-lg shadow-akv-red/30 transition-all active:scale-95 cursor-pointer"
+                    >
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z"/>
+                        </svg>
+                        <span>Play Trailer</span>
+                    </button>
+
+                    <button 
+                        id="heroDownloadBtn"
+                        class="flex items-center gap-2.5 bg-zinc-900/90 hover:bg-zinc-800 text-akv-gold border border-akv-gold/40 font-bold px-6 py-3.5 rounded-xl backdrop-blur-md transition-all active:scale-95 cursor-pointer"
+                    >
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                        </svg>
+                        <span>Direct Download</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== MAIN CATALOG GRID ==================== -->
+    <main class="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-6">
+            <div>
+                <h2 class="text-xl sm:text-2xl font-bold text-white flex items-center gap-2.5">
+                    <span class="w-1.5 h-6 rounded-full bg-akv-gold inline-block"></span>
+                    <span id="gridHeading">Latest Releases &amp; Downloads</span>
+                </h2>
+                <p class="text-xs sm:text-sm text-zinc-400 mt-1">Stream official previews or download full high-bitrate master files directly.</p>
+            </div>
+            <div class="text-xs font-medium text-zinc-400 bg-akv-surface px-3 py-1.5 rounded-lg border border-zinc-800 self-start sm:self-auto">
+                Showing <span id="movieCount" class="text-akv-gold font-bold">0</span> titles
+            </div>
+        </div>
+
+        <!-- Movie Cards Grid -->
+        <div id="movieGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <!-- Populated dynamically via JS -->
+        </div>
+
+        <!-- Empty Search State -->
+        <div id="emptyState" class="hidden text-center py-20 bg-akv-surface/50 rounded-2xl border border-zinc-800/80 my-6">
+            <svg class="w-14 h-14 text-zinc-600 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 4v16M17 4v16M3 8h4m10 0h4M3 12h18M3 16h4m10 0h4M4 20h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v14a1 1 0 001 1z"/>
+            </svg>
+            <h3 class="text-lg font-bold text-white">No movies match your filter</h3>
+            <p class="text-sm text-zinc-400 mt-1 max-w-md mx-auto">Try clearing your search query or switching back to "All" genres to browse the complete AKV Pictures vault.</p>
+            <button onclick="resetFilters()" class="mt-4 px-5 py-2 rounded-xl bg-akv-red text-white text-xs font-bold hover:bg-akv-redHover transition-colors cursor-pointer">
+                Reset Filters
+            </button>
+        </div>
+    </main>
+
+    <!-- ==================== FOOTER ==================== -->
+    <footer class="border-t border-zinc-800/80 bg-akv-surface/60 mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-2">
+                <span class="font-cinema text-lg font-bold text-white">AKV <span class="text-akv-gold">PICTURES</span></span>
+                <span class="text-zinc-600">|</span>
+                <span class="text-xs text-zinc-400">Worldwide Digital Distribution</span>
+            </div>
+            <p class="text-xs text-zinc-500 text-center sm:text-right">
+                &copy; 2026 AKV Pictures Studio. Ready for static GitHub Pages deployment.
+            </p>
+        </div>
+    </footer>
+
+    <!-- ==================== WATCH PREVIEW VIDEO MODAL ==================== -->
+    <div id="previewModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/90 backdrop-blur-md p-4">
+        <div class="relative w-full max-w-4xl bg-akv-surface border border-zinc-800 rounded-2xl overflow-hidden shadow-2xl">
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between px-5 py-4 border-b border-zinc-800">
+                <div>
+                    <span class="text-[10px] font-bold uppercase tracking-widest text-akv-gold">AKV Cinema Preview</span>
+                    <h3 id="previewTitle" class="text-lg font-bold text-white">Movie Title</h3>
+                </div>
+                <button onclick="closePreviewModal()" class="p-2 rounded-xl bg-zinc-800/80 hover:bg-akv-red text-zinc-300 hover:text-white transition-colors cursor-pointer" aria-label="Close modal">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Video Player Container -->
+            <div class="relative aspect-video bg-black flex items-center justify-center" id="videoContainer">
+                <!-- HTML5 Video or YouTube Iframe injected here -->
+            </div>
+
+            <!-- Modal Footer Info & Direct Download -->
+            <div class="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-akv-card">
+                <p id="previewDesc" class="text-xs sm:text-sm text-zinc-300 max-w-2xl"></p>
+                <a 
+                    id="previewDownloadLink" 
+                    href="#" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    class="flex items-center justify-center gap-2 bg-akv-gold hover:bg-akv-goldHover text-zinc-950 font-bold text-xs sm:text-sm px-5 py-3 rounded-xl shadow-lg transition-all whitespace-nowrap cursor-pointer"
+                >
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                    </svg>
+                    <span>Download Full Movie</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== ADMIN UPLOAD & GITHUB EXPORT MODAL ==================== -->
+    <div id="adminModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/85 backdrop-blur-md p-4 overflow-y-auto">
+        <div class="relative w-full max-w-2xl bg-akv-surface border border-zinc-800 rounded-2xl shadow-2xl my-8 overflow-hidden">
+            <!-- Header -->
+            <div class="flex items-center justify-between px-6 py-4 bg-gradient-to-r from-akv-card to-akv-surface border-b border-zinc-800">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-akv-gold/20 border border-akv-gold/40 flex items-center justify-center text-akv-gold">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="text-base sm:text-lg font-bold text-white">AKV Studio Admin Upload</h3>
+                        <p class="text-xs text-zinc-400">Publish a new release &amp; export <code class="text-akv-gold">movies.json</code> for GitHub Pages</p>
+                    </div>
+                </div>
+                <button onclick="closeAdminModal()" class="p-2 rounded-xl bg-zinc-800 hover:bg-akv-red text-zinc-300 hover:text-white transition-colors cursor-pointer">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Form Body -->
+            <form id="uploadForm" class="p-6 space-y-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-zinc-300 mb-1.5">Movie Title *</label>
+                        <input type="text" id="mTitle" required placeholder="e.g., Shadow Protocol" class="w-full bg-akv-black border border-zinc-700 focus:border-akv-gold rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-zinc-300 mb-1.5">Release Year *</label>
+                        <input type="number" id="mYear" required value="2026" min="1950" max="2035" class="w-full bg-akv-black border border-zinc-700 focus:border-akv-gold rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-zinc-300 mb-1.5">Genre *</label>
+                        <select id="mGenre" class="w-full bg-akv-black border border-zinc-700 focus:border-akv-gold rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none">
+                            <option value="Action">Action</option>
+                            <option value="Drama">Drama</option>
+                            <option value="Thriller">Thriller</option>
+                            <option value="Sci-Fi">Sci-Fi</option>
+                            <option value="Comedy">Comedy</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-zinc-300 mb-1.5">Quality Badge *</label>
+                        <select id="mQuality" class="w-full bg-akv-black border border-zinc-700 focus:border-akv-gold rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none">
+                            <option value="4K">4K Ultra HD</option>
+                            <option value="1080p">1080p Full HD</option>
+                            <option value="720p">720p HD</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-zinc-300 mb-1.5">File Size *</label>
+                        <input type="text" id="mSize" required placeholder="e.g., 2.4 GB" class="w-full bg-akv-black border border-zinc-700 focus:border-akv-gold rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-zinc-300 mb-1.5">Poster Image URL *</label>
+                    <input type="url" id="mPoster" required placeholder="https://example.com/poster.jpg" class="w-full bg-akv-black border border-zinc-700 focus:border-akv-gold rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none">
+                    <p class="text-[11px] text-zinc-500 mt-1">Tip: Use a direct JPG/PNG image link (e.g., from GitHub repo assets, Imgur, or Unsplash).</p>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-zinc-300 mb-1.5">Video / Direct Download URL *</label>
+                    <input type="url" id="mVideo" required placeholder="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" class="w-full bg-akv-black border border-zinc-700 focus:border-akv-gold rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none">
+                    <p class="text-[11px] text-zinc-500 mt-1">Supports direct <code>.mp4</code>/<code>.webm</code> links (plays in preview &amp; downloads directly) or Google Drive/Archive.org/YouTube links.</p>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-zinc-300 mb-1.5">Synopsis / Description *</label>
+                    <textarea id="mDesc" rows="2" required placeholder="Enter a compelling synopsis for AKV Pictures viewers..." class="w-full bg-akv-black border border-zinc-700 focus:border-akv-gold rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none"></textarea>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="pt-3 border-t border-zinc-800 flex flex-col sm:flex-row items-center justify-between gap-3">
+                    <button 
+                        type="button" 
+                        onclick="exportMoviesJSON()" 
+                        class="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-akv-gold border border-akv-gold/30 text-xs font-bold transition-all cursor-pointer"
+                    >
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/>
+                        </svg>
+                        <span>Export movies.json</span>
+                    </button>
+
+                    <div class="flex items-center gap-2 w-full sm:w-auto">
+                        <button 
+                            type="button" 
+                            onclick="resetCatalogToDefault()" 
+                            class="px-3.5 py-2.5 rounded-xl text-xs font-semibold text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors cursor-pointer"
+                            title="Reset local changes to default catalog"
+                        >
+                            Reset Default
+                        </button>
+                        <button 
+                            type="submit" 
+                            class="flex-1 sm:flex-initial flex items-center justify-center gap-2 bg-akv-red hover:bg-akv-redHover text-white font-bold text-xs sm:text-sm px-6 py-2.5 rounded-xl shadow-lg shadow-akv-red/30 transition-all cursor-pointer"
+                        >
+                            <span>Publish to AKV Vault</span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ==================== TOAST NOTIFICATION ==================== -->
+    <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- ==================== APPLICATION LOGIC ==================== -->
+    <script>
+        // Default initial catalog for AKV Pictures (used if movies.json isn't present or localStorage is empty)
+        const DEFAULT_MOVIES = [
+            {
+                id: 'akv-01',
+                title: 'The Crimson Horizon',
+                year: 2026,
+                genre: 'Sci-Fi',
+                quality: '4K',
+                size: '4.8 GB',
+                featured: true,
+                poster: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=800&q=80',
+                backdrop: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=1920&q=80',
+                videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4',
+                description: 'When a deep-space extraction crew uncovers an ancient signal beyond the outer rim, one rogue pilot must outrun a corporate armada to deliver the truth to Earth.'
+            },
+            {
+                id: 'akv-02',
+                title: 'Vengeance in Chennai',
+                year: 2026,
+                genre: 'Action',
+                quality: '4K',
+                size: '3.6 GB',
+                featured: false,
+                poster: 'https://images.unsplash.com/photo-1509347528160-9a9e33742cdb?auto=format&fit=crop&w=800&q=80',
+                videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+                description: 'An undercover tactical officer infiltrates a high-stakes coastal smuggling syndicate in a relentless race against time before monsoon nightfall.'
+            },
+            {
+                id: 'akv-03',
+                title: 'Midnight Frequencies',
+                year: 2025,
+                genre: 'Thriller',
+                quality: '1080p',
+                size: '2.1 GB',
+                featured: false,
+                poster: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=800&q=80',
+                videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
+                description: 'A late-night radio host receives an encrypted broadcast predicting unsolved crimes across the city—until the next voice on the line is his own.'
+            },
+            {
+                id: 'akv-04',
+                title: 'Golden Monsoons',
+                year: 2025,
+                genre: 'Drama',
+                quality: '4K',
+                size: '3.9 GB',
+                featured: false,
+                poster: 'https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=800&q=80',
+                videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4',
+                description: 'Spanning three generations of a legendary cinema family, an aspiring director fights to save their historic single-screen theater.'
+            },
+            {
+                id: 'akv-05',
+                title: 'Zero Gravity Laughs',
+                year: 2026,
+                genre: 'Comedy',
+                quality: '1080p',
+                size: '1.8 GB',
+                featured: false,
+                poster: 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=800&q=80',
+                videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+                description: 'When four mismatched wedding caterers accidentally board a commercial orbital shuttle, they have 48 hours to fake astronaut credentials.'
+            },
+            {
+                id: 'akv-06',
+                title: 'Neon Ronin',
+                year: 2025,
+                genre: 'Action',
+                quality: '4K',
+                size: '4.2 GB',
+                featured: false,
+                poster: 'https://images.unsplash.com/photo-1542204165-65bf26472b9b?auto=format&fit=crop&w=800&q=80',
+                videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
+                description: 'In a rain-drenched cyber metropolis, a retired blade master returns to protect the young hacker holding the keys to the city grid.'
+            }
+        ];
+
+        const STORAGE_KEY = 'akv_pictures_catalog_v1';
+        let movies = [];
+        let activeCategory = 'All';
+        let searchQuery = '';
+
+        // Initialize App on Load
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadCatalog();
+            setupEventListeners();
+            renderHero();
+            renderMovies();
+        });
+
+        // Load movies from localStorage, or attempt fetching ./movies.json on GitHub Pages, fallback to DEFAULT_MOVIES
+        async function loadCatalog() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) {
+                try {
+                    movies = JSON.parse(saved);
+                    if (Array.isArray(movies) && movies.length > 0) return;
+                } catch (e) {
+                    console.warn('Corrupted local catalog, falling back.');
+                }
+            }
+
+            try {
+                const response = await fetch('./movies.json', { cache: 'no-store' });
+                if (response.ok) {
+                    const remoteMovies = await response.json();
+                    if (Array.isArray(remoteMovies) && remoteMovies.length > 0) {
+                        movies = remoteMovies;
+                        saveCatalog();
+                        return;
+                    }
+                }
+            } catch (err) {
+                // Expected when running locally without movies.json yet
+            }
+
+            movies = [...DEFAULT_MOVIES];
+            saveCatalog();
+        }
+
+        function saveCatalog() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(movies));
+        }
+
+        function setupEventListeners() {
+            // Search input
+            document.getElementById('searchInput').addEventListener('input', (e) => {
+                searchQuery = e.target.value.trim().toLowerCase();
+                renderMovies();
+            });
+
+            // Category buttons
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.category-btn').forEach(b => {
+                        b.classList.remove('active', 'bg-akv-red', 'text-white', 'shadow-md', 'shadow-akv-red/30');
+                        b.classList.add('bg-akv-surface', 'text-zinc-400', 'border', 'border-zinc-800/80');
+                    });
+                    btn.classList.add('active', 'bg-akv-red', 'text-white', 'shadow-md', 'shadow-akv-red/30');
+                    btn.classList.remove('bg-akv-surface', 'text-zinc-400', 'border', 'border-zinc-800/80');
+
+                    activeCategory = btn.getAttribute('data-category');
+                    renderMovies();
+                });
+            });
+
+            // Admin Upload Form Submit
+            document.getElementById('uploadForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const newMovie = {
+                    id: 'akv-' + Date.now(),
+                    title: document.getElementById('mTitle').value.trim(),
+                    year: parseInt(document.getElementById('mYear').value, 10) || 2026,
+                    genre: document.getElementById('mGenre').value,
+                    quality: document.getElementById('mQuality').value,
+                    size: document.getElementById('mSize').value.trim(),
+                    poster: document.getElementById('mPoster').value.trim(),
+                    backdrop: document.getElementById('mPoster').value.trim(),
+                    videoUrl: document.getElementById('mVideo').value.trim(),
+                    description: document.getElementById('mDesc').value.trim(),
+                    featured: true
+                };
+
+                movies.unshift(newMovie);
+                saveCatalog();
+                renderHero();
+                renderMovies();
+                closeAdminModal();
+                e.target.reset();
+                showToast(`"${newMovie.title}" published to AKV Pictures! Remember to Export movies.json for GitHub.`, 'gold');
+            });
+
+            // Close modals on Escape key
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    closePreviewModal();
+                    closeAdminModal();
+                }
+            });
+        }
+
+        // Render Featured Hero Banner (uses latest/featured movie)
+        function renderHero() {
+            const heroMovie = movies.find(m => m.featured) || movies[0];
+            if (!heroMovie) return;
+
+            document.getElementById('heroBackdrop').src = heroMovie.backdrop || heroMovie.poster;
+            document.getElementById('heroTitle').textContent = heroMovie.title.toUpperCase();
+            document.getElementById('heroDescription').textContent = heroMovie.description;
+            document.getElementById('heroMeta').innerHTML = `
+                <span class="px-2.5 py-0.5 rounded bg-akv-gold text-zinc-950 font-extrabold tracking-wide">${escapeHTML(heroMovie.quality)}</span>
+                <span>${escapeHTML(String(heroMovie.year))}</span>
+                <span>•</span>
+                <span>${escapeHTML(heroMovie.genre)}</span>
+                <span>•</span>
+                <span class="text-zinc-400">Size: ${escapeHTML(heroMovie.size)}</span>
+            `;
+
+            document.getElementById('heroPlayBtn').onclick = () => openPreviewModal(heroMovie.id);
+            document.getElementById('heroDownloadBtn').onclick = () => triggerDownload(heroMovie.id);
+        }
+
+        // Render Filtered Movie Grid
+        function renderMovies() {
+            const grid = document.getElementById('movieGrid');
+            const emptyState = document.getElementById('emptyState');
+            const countEl = document.getElementById('movieCount');
+            const headingEl = document.getElementById('gridHeading');
+
+            const filtered = movies.filter(movie => {
+                const matchesCategory = activeCategory === 'All' || movie.genre.toLowerCase() === activeCategory.toLowerCase();
+                const matchesSearch = !searchQuery || 
+                    movie.title.toLowerCase().includes(searchQuery) ||
+                    movie.genre.toLowerCase().includes(searchQuery) ||
+                    String(movie.year).includes(searchQuery) ||
+                    movie.description.toLowerCase().includes(searchQuery);
+                return matchesCategory && matchesSearch;
+            });
+
+            countEl.textContent = filtered.length;
+            headingEl.textContent = activeCategory === 'All' ? 'Latest Releases & Downloads' : `${activeCategory} Movies`;
+
+            if (filtered.length === 0) {
+                grid.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+            grid.innerHTML = filtered.map(movie => {
+                const is4K = movie.quality.toUpperCase().includes('4K');
+                const badgeClass = is4K 
+                    ? 'bg-akv-gold text-zinc-950 border-akv-gold' 
+                    : 'bg-akv-red text-white border-akv-red';
+
+                return `
+                <article class="group bg-akv-card rounded-2xl overflow-hidden border border-zinc-800/90 hover:border-akv-gold/60 shadow-lg hover:shadow-2xl hover:shadow-akv-red/10 transition-all duration-300 flex flex-col">
+                    <!-- Poster Container -->
+                    <div class="relative aspect-[2/3] w-full overflow-hidden bg-zinc-900">
+                        <img 
+                            src="${escapeHTML(movie.poster)}" 
+                            alt="${escapeHTML(movie.title)}"
+                            loading="lazy"
+                            onerror="this.src='https://placehold.co/600x900/18181f/f5c518?text=${encodeURIComponent(movie.title)}'"
+                            class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                        >
+                        <!-- Gradient Overlay -->
+                        <div class="absolute inset-0 bg-gradient-to-t from-akv-card via-transparent to-black/40 opacity-90"></div>
+
+                        <!-- Top Badges -->
+                        <div class="absolute top-3 left-3 right-3 flex items-center justify-between gap-2">
+                            <span class="px-2.5 py-1 rounded-lg text-[11px] font-extrabold tracking-wider uppercase border shadow-md ${badgeClass}">
+                                ${escapeHTML(movie.quality)}
+                            </span>
+                            <span class="px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-black/75 backdrop-blur-md text-zinc-200 border border-zinc-700/70">
+                                ${escapeHTML(movie.size)}
+                            </span>
+                        </div>
+
+                        <!-- Hover Center Play Overlay -->
+                        <button 
+                            onclick="openPreviewModal('${movie.id}')"
+                            aria-label="Watch preview of ${escapeHTML(movie.title)}"
+                            class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/40 cursor-pointer"
+                        >
+                            <div class="w-14 h-14 rounded-full bg-akv-red text-white flex items-center justify-center shadow-xl shadow-akv-red/50 transform scale-90 group-hover:scale-100 transition-transform">
+                                <svg class="w-6 h-6 ml-0.5" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M8 5v14l11-7z"/>
+                                </svg>
+                            </div>
+                        </button>
+                    </div>
+
+                    <!-- Card Details -->
+                    <div class="p-4 flex-1 flex flex-col justify-between space-y-4">
+                        <div>
+                            <div class="flex items-center justify-between text-xs text-zinc-400 mb-1">
+                                <span class="text-akv-gold font-semibold">${escapeHTML(movie.genre)}</span>
+                                <span>${escapeHTML(String(movie.year))}</span>
+                            </div>
+                            <h3 class="text-base sm:text-lg font-bold text-white group-hover:text-akv-gold transition-colors line-clamp-1" title="${escapeHTML(movie.title)}">
+                                ${escapeHTML(movie.title)}
+                            </h3>
+                            <p class="text-xs text-zinc-400 mt-1.5 line-clamp-2 leading-relaxed">
+                                ${escapeHTML(movie.description)}
+                            </p>
+                        </div>
+
+                        <!-- Card Action Buttons -->
+                        <div class="grid grid-cols-2 gap-2.5 pt-2 border-t border-zinc-800/80">
+                            <button 
+                                onclick="openPreviewModal('${movie.id}')"
+                                class="flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-zinc-800/90 hover:bg-zinc-700 text-white text-xs font-semibold transition-colors cursor-pointer"
+                            >
+                                <svg class="w-3.5 h-3.5 text-akv-red" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M8 5v14l11-7z"/>
+                                </svg>
+                                <span>Watch Preview</span>
+                            </button>
+
+                            <button 
+                                onclick="triggerDownload('${movie.id}')"
+                                class="flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-akv-red hover:bg-akv-redHover text-white text-xs font-bold shadow-md shadow-akv-red/20 transition-all active:scale-95 cursor-pointer"
+                            >
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                                </svg>
+                                <span>Download</span>
+                            </button>
+                        </div>
+                    </div>
+                </article>
+                `;
+            }).join('');
+        }
+
+        // ==================== VIDEO PREVIEW MODAL LOGIC ====================
+        function openPreviewModal(movieId) {
+            const movie = movies.find(m => m.id === movieId);
+            if (!movie) return;
+
+            document.getElementById('previewTitle').textContent = `${movie.title} (${movie.year}) — ${movie.quality}`;
+            document.getElementById('previewDesc').textContent = movie.description;
+
+            const dlLink = document.getElementById('previewDownloadLink');
+            dlLink.href = movie.videoUrl;
+            dlLink.onclick = (e) => {
+                e.preventDefault();
+                triggerDownload(movie.id);
+            };
+
+            const container = document.getElementById('videoContainer');
+            const youtubeId = extractYouTubeID(movie.videoUrl);
+
+            if (youtubeId) {
+                container.innerHTML = `
+                    <iframe 
+                        class="w-full h-full" 
+                        src="https://www.youtube.com/embed/${youtubeId}?autoplay=1&rel=0" 
+                        title="${escapeHTML(movie.title)}" 
+                        frameborder="0" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                        allowfullscreen>
+                    </iframe>
+                `;
+            } else {
+                container.innerHTML = `
+                    <video 
+                        id="activePreviewVideo"
+                        class="w-full h-full max-h-[70vh] bg-black" 
+                        controls 
+                        autoplay 
+                        playsinline
+                        poster="${escapeHTML(movie.poster)}"
+                    >
+                        <source src="${escapeHTML(movie.videoUrl)}" type="video/mp4">
+                        Your browser does not support direct video playback. Use the Download button below to save the file.
+                    </video>
+                `;
+            }
+
+            const modal = document.getElementById('previewModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closePreviewModal() {
+            const modal = document.getElementById('previewModal');
+            const container = document.getElementById('videoContainer');
+            container.innerHTML = ''; // Stops video/audio immediately
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        // ==================== DIRECT DOWNLOAD + TOAST NOTIFICATION ====================
+        function triggerDownload(movieId) {
+            const movie = movies.find(m => m.id === movieId);
+            if (!movie) return;
+
+            showToast(`Starting download: "${movie.title}" (${movie.quality} • ${movie.size})`, 'red');
+
+            // Create temporary anchor to initiate browser download or open hosted file link
+            const link = document.createElement('a');
+            link.href = movie.videoUrl;
+            link.setAttribute('download', `${movie.title.replace(/[^a-z0-9]/gi, '_')}_${movie.quality}.mp4`);
+            link.setAttribute('target', '_blank');
+            link.setAttribute('rel', 'noopener noreferrer');
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // ==================== ADMIN MODAL & EXPORT MOVIES.JSON ====================
+        function openAdminModal() {
+            const modal = document.getElementById('adminModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeAdminModal() {
+            const modal = document.getElementById('adminModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function exportMoviesJSON() {
+            const dataStr = JSON.stringify(movies, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'movies.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            showToast('Exported movies.json! Commit this file to your GitHub repo root to update everyone worldwide.', 'gold');
+        }
+
+        function resetCatalogToDefault() {
+            movies = [...DEFAULT_MOVIES];
+            saveCatalog();
+            renderHero();
+            renderMovies();
+            showToast('Catalog restored to default AKV Pictures showcase.', 'red');
+        }
+
+        function resetFilters(e) {
+            if (e) e.preventDefault();
+            activeCategory = 'All';
+            searchQuery = '';
+            document.getElementById('searchInput').value = '';
+            document.querySelectorAll('.category-btn').forEach(b => {
+                if (b.getAttribute('data-category') === 'All') {
+                    b.classList.add('active', 'bg-akv-red', 'text-white', 'shadow-md', 'shadow-akv-red/30');
+                    b.classList.remove('bg-akv-surface', 'text-zinc-400', 'border', 'border-zinc-800/80');
+                } else {
+                    b.classList.remove('active', 'bg-akv-red', 'text-white', 'shadow-md', 'shadow-akv-red/30');
+                    b.classList.add('bg-akv-surface', 'text-zinc-400', 'border', 'border-zinc-800/80');
+                }
+            });
+            renderMovies();
+        }
+
+        // ==================== UTILITIES ====================
+        function showToast(message, accent = 'red') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            const borderClass = accent === 'gold' ? 'border-akv-gold/60' : 'border-akv-red/60';
+            const iconColor = accent === 'gold' ? 'text-akv-gold' : 'text-akv-red';
+
+            toast.className = `pointer-events-auto flex items-center gap-3 bg-akv-surface/95 backdrop-blur-md text-white px-4 py-3.5 rounded-xl border ${borderClass} shadow-2xl max-w-sm transform transition-all duration-300 translate-y-2 opacity-0`;
+            toast.innerHTML = `
+                <svg class="w-5 h-5 ${iconColor} shrink-0" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                </svg>
+                <span class="text-xs sm:text-sm font-medium leading-snug">${escapeHTML(message)}</span>
+            `;
+
+            container.appendChild(toast);
+            requestAnimationFrame(() => {
+                toast.classList.remove('translate-y-2', 'opacity-0');
+            });
+
+            setTimeout(() => {
+                toast.classList.add('translate-y-2', 'opacity-0');
+                setTimeout(() => toast.remove(), 300);
+            }, 4500);
+        }
+
+        function extractYouTubeID(url) {
+            if (!url) return null;
+            const regExp = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i;
+            const match = url.match(regExp);
+            return match ? match[1] : null;
+        }
+
+        function escapeHTML(str) {
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+    </script>
+</body>
+</html>
